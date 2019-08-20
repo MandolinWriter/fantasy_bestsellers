@@ -9,11 +9,12 @@ class Top100Spider(scrapy.Spider):
     ]
 
     def parse(self, response):
-        for book in response.xpath('//span[has-class("aok-inline-block zg-item")]'):
+        for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
             yield {
-                'title': book.xpath('./a/div/text()').get(),
-                'author': book.xpath('./div[1]/a/text()').get(),
-                'price': book.xpath('./div[3]/a/span/span/text()').get()
+                'f-rank': book.xpath('./div/span/span/text()').get(),
+                'title': book.xpath('./span/a/div/text()').get(),
+                'author': book.xpath('./span/div[1]/a/text()').get(),
+                'price': book.xpath('./span/div[3]/a/span/span/text()').get()
             }
         next_page_url = response.xpath('//li[@class="a-last"]/a/@href').get()
 
