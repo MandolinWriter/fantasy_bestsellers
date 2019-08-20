@@ -14,7 +14,8 @@ class Top100Spider(scrapy.Spider):
                 'title': book.xpath('./a/div/text()').get(),
                 'author': book.xpath('./div[1]/a/text()').get(),
                 'price': book.xpath('./div[3]/a/span/span/text()').get()
+            }
+        next_page_url = response.xpath('//li[@class="a-last"]/a/@href').get()
 
-        # yield {
-        #     'title': response.css('title::text').get()
-        }
+        if next_page_url is not None:
+            yield scrapy.Request(response.urljoin(next_page_url))
