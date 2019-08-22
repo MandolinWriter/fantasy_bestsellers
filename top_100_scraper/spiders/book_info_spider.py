@@ -66,7 +66,8 @@ class BookInfoSpider(scrapy.Spider):
         detail_str = '//div[@id = "detail-bullets"]//div[@class = "content"]'
         book_info['page_count'] = int(response.xpath(
             detail_str + '/ul/li[2]/text()').get().replace(',','').split()[0])
-        #book_info['publisher'] = response.xpath(detail_str + '/ul/li[3]/text()').get()
+        book_info['publisher'] = response.xpath(detail_str +
+            '//li/b[contains(text(), "Publisher:")]/../text()').get().strip()
         book_info['all_rank'] = int(((' '.join(response.xpath(detail_str +
             '//li[@id = "SalesRank"]/text()').getall()[1].split())).replace('#','').split())[0])
 
