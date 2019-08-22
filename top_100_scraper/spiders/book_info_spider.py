@@ -17,15 +17,14 @@ class BookInfoSpider(scrapy.Spider):
 
             book_info = BookItem()
 
-            f_rank = book.xpath('./div/span/span/text()').get()
-            print('********' + f_rank)
-            book_info['f_rank'] = int("".join(filter(str.isdigit, f_rank)))
+            book_info['f_rank'] = int("".join(filter(str.isdigit,
+                book.xpath('./div/span/span/text()').get())))
 
-            # next_book_url = book.xpath('./span/a/@href').get()
-            #
-            # if next_book_url is not None:
-            #     yield scrapy.Request(response.urljoin(next_book_url),
-            #         callback = self.parse_book, meta = {'item': book_info})
+            next_book_url = book.xpath('./span/a/@href').get()
+
+            if next_book_url is not None:
+                yield scrapy.Request(response.urljoin(next_book_url),
+                    callback = self.parse_book, meta = {'item': book_info})
 
 
         next_page_url = response.xpath('//ul[@class = "a-pagination"]'
@@ -45,8 +44,15 @@ class BookInfoSpider(scrapy.Spider):
         book_info['author'] = response.xpath('//div[@id = "bylineInfo"]/span/span[1]'
             '/a/text()').get()
 
-        book_info['price'] = " ".join(response.xpath('//tr[@class = "kindle-price"]'
-            '//span[@class = "a-size-medium a-color-price"]/text()').get().split())
+
+        price = response.xpath('//tr[@class = "kindle-price"]'
+            '//span[@class = "a-size-medium a-color-price"]/text()').get())
+        print('********' + price)
+        book_info['price'] = "".join(price.split())
+
+
+        # book_info['price'] = "".join(response.xpath('//tr[@class = "kindle-price"]'
+        #     '//span[@class = "a-size-medium a-color-price"]/text()').get().split())
 
         group_str = '//div[@id = "reviewFeatureGroup"]'
         book_info['series'] = response.xpath(group_str + '/span/a/text()').get()
@@ -72,8 +78,12 @@ class BookInfoSpider(scrapy.Spider):
         detail_str = '//div[@id = "detail-bullets"]//div[@class = "content"]'
         book_info['page_count'] = int(response.xpath(
             detail_str + '/ul/li[2]/text()').get().replace(',','').split()[0])
-        book_info['publisher'] = response.xpath(detail_str +
-            '//li/b[contains(text(), "Publisher:")]/../text()').get().strip()
+        try:
+            book_info['publisher'] = response.xpath(detail_str +
+                '//li/b[contains(text(), "Publisher:")]/../text()').get().strip()
+        except:
+            book_info['publisher'] = None
+        
         book_info['all_rank'] = int(((' '.join(response.xpath(detail_str +
             '//li[@id = "SalesRank"]/text()').getall()[1].split())).replace('#','').split())[0])
 
