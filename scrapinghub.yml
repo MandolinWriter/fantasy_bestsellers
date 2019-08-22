@@ -1,6 +1,7 @@
 projects:
   default: 404928
-  stack: scrapy:1.7-py3
+
+stack: scrapy:1.7-py3
 
 requirements:
   file: requirements.txt
