@@ -1,4 +1,5 @@
 import scrapy
+from bs4 import BeautifulSoup
 from top_100_scraper.items import BookItem
 
 
@@ -77,7 +78,7 @@ class BookInfoSpider(scrapy.Spider):
         else:
             book_info['ku'] = 'no'
 
-        book_info['blurb'] = response.xpath('//div[@id = "bookDescription_feature_div"]'
-            '/noscript').get()
+        book_info['blurb'] = BeautifulSoup(response.xpath('//div[@id = "bookDescription_feature_div"]'
+            '/noscript').get()).text.strip('\n')
 
         yield book_info
