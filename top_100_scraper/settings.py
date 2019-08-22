@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'top_100_scraper.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = '(+http://www.aaronhorsager.com)'
+# USER_AGENT = '(+http://www.aaronhorsager.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
