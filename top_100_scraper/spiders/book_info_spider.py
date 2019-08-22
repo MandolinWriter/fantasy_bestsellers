@@ -12,7 +12,7 @@ class BookInfoSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        counter = 1
+        #counter = 1
 
 
         for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
@@ -26,10 +26,10 @@ class BookInfoSpider(scrapy.Spider):
             if next_book_url is not None:
                 yield scrapy.Request(response.urljoin(next_book_url),
                     callback = self.parse_book, meta = {'item': book_info})
-            if counter > 3:
-                break
-
-            counter = counter + 1
+            # if counter > 3:
+            #     break
+            # 
+            # counter = counter + 1
 
         next_page_url = response.xpath('//ul[@class = "a-pagination"]'
             '//li[@class="a-last"]/a/@href').get()
