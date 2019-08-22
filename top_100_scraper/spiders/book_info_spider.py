@@ -1,4 +1,5 @@
 import scrapy
+from bs4 import BeautifulSoup
 from top_100_scraper.items import BookItem
 
 
@@ -11,7 +12,7 @@ class BookInfoSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        counter = 1
+        #counter = 1
 
 
         for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
@@ -25,10 +26,18 @@ class BookInfoSpider(scrapy.Spider):
             if next_book_url is not None:
                 yield scrapy.Request(response.urljoin(next_book_url),
                     callback = self.parse_book, meta = {'item': book_info})
-            if counter > 3:
-                break
+            # if counter > 3:
+            #     break
+            # 
+            # counter = counter + 1
 
-            counter = counter + 1
+        next_page_url = response.xpath('//ul[@class = "a-pagination"]'
+            '//li[@class="a-last"]/a/@href').get()
+
+        if next_page_url is not None:
+            yield scrapy.Request(response.urljoin(next_page_url))
+
+
 
     def parse_book(self, response):
         book_info = response.meta['item']
@@ -66,7 +75,8 @@ class BookInfoSpider(scrapy.Spider):
         detail_str = '//div[@id = "detail-bullets"]//div[@class = "content"]'
         book_info['page_count'] = int(response.xpath(
             detail_str + '/ul/li[2]/text()').get().replace(',','').split()[0])
-        #book_info['publisher'] = response.xpath(detail_str + '/ul/li[3]/text()').get()
+        book_info['publisher'] = response.xpath(detail_str +
+            '//li/b[contains(text(), "Publisher:")]/../text()').get().strip()
         book_info['all_rank'] = int(((' '.join(response.xpath(detail_str +
             '//li[@id = "SalesRank"]/text()').getall()[1].split())).replace('#','').split())[0])
 
@@ -76,7 +86,7 @@ class BookInfoSpider(scrapy.Spider):
         else:
             book_info['ku'] = 'no'
 
-        book_info['blurb'] = response.xpath('//div[@id = "bookDescription_feature_div"]'
-            '/noscript').get()
+        book_info['blurb'] = BeautifulSoup(response.xpath('//div[@id = "bookDescription_feature_div"]'
+            '/noscript').get()).text.strip('\n')
 
         yield book_info
