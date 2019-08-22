@@ -45,14 +45,8 @@ class BookInfoSpider(scrapy.Spider):
             '/a/text()').get()
 
 
-        price = response.xpath('//tr[@class = "kindle-price"]'
-            '//span[@class = "a-size-medium a-color-price"]/text()').get()
-        print('********' + price)
-        book_info['price'] = "".join(price.split())
-
-
-        # book_info['price'] = "".join(response.xpath('//tr[@class = "kindle-price"]'
-        #     '//span[@class = "a-size-medium a-color-price"]/text()').get().split())
+        book_info['price'] = "".join(response.xpath('//tr[@class = "kindle-price"]'
+            '//span[@class = "a-size-medium a-color-price"]/text()').getall().split())
 
         group_str = '//div[@id = "reviewFeatureGroup"]'
         book_info['series'] = response.xpath(group_str + '/span/a/text()').get()
