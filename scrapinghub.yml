@@ -1,8 +1,6 @@
 projects:
-	default top_100_scraper
-
-stack:
-	scrapy:1.7-py3
+  default: Top 100 Scraper
+  stack: scrapy:1.7-py3
 
 requirements:
-	requirements.txt
+  file: requirements.txt
