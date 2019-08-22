@@ -16,6 +16,11 @@ class BookInfoSpider(scrapy.Spider):
 
 
         for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
+
+            print(len(response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]')))
+            break
+
+
             book_info = BookItem()
 
             book_info['f_rank'] = int(' '.join(filter(str.isdigit,
@@ -28,7 +33,7 @@ class BookInfoSpider(scrapy.Spider):
                     callback = self.parse_book, meta = {'item': book_info})
             # if counter > 3:
             #     break
-            # 
+            #
             # counter = counter + 1
 
         next_page_url = response.xpath('//ul[@class = "a-pagination"]'
@@ -49,7 +54,7 @@ class BookInfoSpider(scrapy.Spider):
             '/a/text()').get()
 
         book_info['price'] = " ".join(response.xpath('//tr[@class = "kindle-price"]'
-            '/td/span/text()').get().split())
+            '//span[@class = "a-size-medium a-color-price"]/text()').get().split())
 
         group_str = '//div[@id = "reviewFeatureGroup"]'
         book_info['series'] = response.xpath(group_str + '/span/a/text()').get()
