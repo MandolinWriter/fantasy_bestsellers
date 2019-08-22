@@ -17,10 +17,6 @@ class BookInfoSpider(scrapy.Spider):
 
         for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
 
-            print(len(response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]')))
-            break
-
-
             book_info = BookItem()
 
             book_info['f_rank'] = int(' '.join(filter(str.isdigit,
