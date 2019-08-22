@@ -31,6 +31,14 @@ class BookInfoSpider(scrapy.Spider):
 
             counter = counter + 1
 
+        next_page_url = response.xpath('//ul[@class = "a-pagination"]'
+            '//li[@class="a-last"]/a/@href').get()
+
+        if next_page_url is not None:
+            yield scrapy.Request(response.urljoin(next_page_url))
+
+
+
     def parse_book(self, response):
         book_info = response.meta['item']
 
