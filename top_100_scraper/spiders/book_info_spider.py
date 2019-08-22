@@ -19,7 +19,7 @@ class BookInfoSpider(scrapy.Spider):
 
             f_rank = book.xpath('./div/span/span/text()').get()
             print('********' + f_rank)
-            book_info['f_rank'] = int(' '.join(filter(str.isdigit, f_rank)))
+            book_info['f_rank'] = int("".join(filter(str.isdigit, f_rank)))
 
             # next_book_url = book.xpath('./span/a/@href').get()
             #
@@ -52,13 +52,13 @@ class BookInfoSpider(scrapy.Spider):
         book_info['series'] = response.xpath(group_str + '/span/a/text()').get()
 
         try:
-            book_info['series_num'] = int(' '.join(filter(str.isdigit,
+            book_info['series_num'] = int("".join(filter(str.isdigit,
                 response.xpath(group_str + '/span/b').get())))
         except:
             book_info['series_num'] = None
 
         try:
-            book_info['series_len'] = int(' '.join(filter(str.isdigit,
+            book_info['series_len'] = int("".join(filter(str.isdigit,
                 response.xpath(group_str + '/span/text()').getall()[1])))
         except:
             book_info['series_len'] = None
