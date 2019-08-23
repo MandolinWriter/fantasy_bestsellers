@@ -63,12 +63,18 @@ class BookInfoSpider(scrapy.Spider):
         except:
             book_info['series_len'] = None
 
-        book_info['rating'] = float(response.xpath(group_str + '//div[@id = "averageCustomerReviews"]'
-            '/span/span/@title').get().split()[0])
+        try:
+            book_info['rating'] = float(response.xpath(group_str + '//div[@id = "averageCustomerReviews"]'
+                '/span/span/@title').get().split()[0])
+        except:
+            book_info['rating'] = None
 
-        book_info['review_count'] = int((response.xpath(
-            group_str + '//span[@id = "acrCustomerReviewText"]/text()').get().
-            replace(',','')).split()[0])
+        try:
+            book_info['review_count'] = int((response.xpath(
+                group_str + '//span[@id = "acrCustomerReviewText"]/text()').get().
+                replace(',','')).split()[0])
+        except:
+            book_info['review_count'] = None
 
         detail_str = '//div[@id = "detail-bullets"]//div[@class = "content"]'
 
@@ -93,7 +99,10 @@ class BookInfoSpider(scrapy.Spider):
         else:
             book_info['ku'] = 'no'
 
-        book_info['blurb'] = BeautifulSoup(response.xpath('//div[@id = "bookDescription_feature_div"]'
-            '/noscript').get()).text.strip('\n')
+        try:
+            book_info['blurb'] = BeautifulSoup(response.xpath('//div[@id = "bookDescription_feature_div"]'
+                '/noscript').get()).text.strip('\n')
+        except:
+            book_info['blub'] = None
 
         yield book_info
