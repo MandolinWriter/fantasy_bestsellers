@@ -48,8 +48,11 @@ class BookInfoSpider(scrapy.Spider):
             book_info['price'] = response.xpath('//tr[@class = "kindle-price"]'
                 '//span[@class = "a-size-medium a-color-price"]/text()').get().strip()
         except:
-            book_info['price'] = response.xpath(
-                '//span[@class = "a-size-medium a-color-price"]').get()
+            print('**********')
+            test1 = response.xpath('//tr[@class = "kindle-price"]').get()
+            print(test1)
+            test2 = response.xpath('//span[@class = "a-size-medium a-color-price"]').get()
+            print('**********')
 
         group_str = '//div[@id = "reviewFeatureGroup"]'
 
