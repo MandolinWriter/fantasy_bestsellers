@@ -12,14 +12,12 @@ class BookInfoSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        #counter = 1
-
 
         for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
 
             book_info = BookItem()
 
-            book_info['f_rank'] = int(' '.join(filter(str.isdigit,
+            book_info['f_rank'] = int(''.join(filter(str.isdigit,
                 book.xpath('./div/span/span/text()').get())))
 
             next_book_url = book.xpath('./span/a/@href').get()
@@ -27,10 +25,7 @@ class BookInfoSpider(scrapy.Spider):
             if next_book_url is not None:
                 yield scrapy.Request(response.urljoin(next_book_url),
                     callback = self.parse_book, meta = {'item': book_info})
-            # if counter > 3:
-            #     break
-            #
-            # counter = counter + 1
+
 
         next_page_url = response.xpath('//ul[@class = "a-pagination"]'
             '//li[@class="a-last"]/a/@href').get()
@@ -43,51 +38,71 @@ class BookInfoSpider(scrapy.Spider):
     def parse_book(self, response):
         book_info = response.meta['item']
 
-        book_info['title'] = " ".join(response.xpath(
+        book_info['title'] = ' '.join(response.xpath(
             '//span[@id = "ebooksProductTitle"]/text()').get().split())
 
         book_info['author'] = response.xpath('//div[@id = "bylineInfo"]/span/span[1]'
             '/a/text()').get()
 
-        book_info['price'] = " ".join(response.xpath('//tr[@class = "kindle-price"]'
-            '//span[@class = "a-size-medium a-color-price"]/text()').get().split())
+        book_info['price'] = response.xpath('//tr[@class = "kindle-price"]'
+            '//span[@class = "a-size-medium a-color-price"]/text()').get()
 
         group_str = '//div[@id = "reviewFeatureGroup"]'
+
         book_info['series'] = response.xpath(group_str + '/span/a/text()').get()
 
         try:
-            book_info['series_num'] = int(' '.join(filter(str.isdigit,
+            book_info['series_num'] = int(''.join(filter(str.isdigit,
                 response.xpath(group_str + '/span/b').get())))
         except:
             book_info['series_num'] = None
 
         try:
-            book_info['series_len'] = int(' '.join(filter(str.isdigit,
+            book_info['series_len'] = int("".join(filter(str.isdigit,
                 response.xpath(group_str + '/span/text()').getall()[1])))
         except:
             book_info['series_len'] = None
 
-        book_info['rating'] = float(response.xpath(group_str + '//div[@id = "averageCustomerReviews"]'
-            '/span/span/@title').get().split()[0])
-        book_info['review_count'] = int((response.xpath(
-            group_str + '//span[@id = "acrCustomerReviewText"]/text()').get().
-            replace(',','')).split()[0])
+        try:
+            book_info['rating'] = float(response.xpath(group_str + '//div[@id = "averageCustomerReviews"]'
+                '/span/span/@title').get().split()[0])
+        except:
+            book_info['rating'] = None
+
+        try:
+            book_info['review_count'] = int((response.xpath(
+                group_str + '//span[@id = "acrCustomerReviewText"]/text()').get().
+                replace(',','')).split()[0])
+        except:
+            book_info['review_count'] = None
 
         detail_str = '//div[@id = "detail-bullets"]//div[@class = "content"]'
-        book_info['page_count'] = int(response.xpath(
-            detail_str + '/ul/li[2]/text()').get().replace(',','').split()[0])
-        book_info['publisher'] = response.xpath(detail_str +
-            '//li/b[contains(text(), "Publisher:")]/../text()').get().strip()
+
+        try:
+            book_info['page_count'] = int(response.xpath(
+                detail_str + '//li/b[contains(text(), "Print Length:")]/../text()')
+                .get().replace(',','').split()[0])
+        except:
+            book_info['page_count'] = None
+
+        try:
+            book_info['publisher'] = response.xpath(detail_str +
+                '//li/b[contains(text(), "Publisher:")]/../text()').get().strip()
+        except:
+            book_info['publisher'] = None
+
         book_info['all_rank'] = int(((' '.join(response.xpath(detail_str +
             '//li[@id = "SalesRank"]/text()').getall()[1].split())).replace('#','').split())[0])
-
 
         if response.xpath('//span[@id = "upsell-button"]').get() is not None:
             book_info['ku'] = 'yes'
         else:
             book_info['ku'] = 'no'
 
-        book_info['blurb'] = BeautifulSoup(response.xpath('//div[@id = "bookDescription_feature_div"]'
-            '/noscript').get()).text.strip('\n')
+        try:
+            book_info['blurb'] = BeautifulSoup(response.xpath('//div[@id = "bookDescription_feature_div"]'
+                '/noscript').get()).text.strip('\n')
+        except:
+            book_info['blub'] = None
 
         yield book_info
