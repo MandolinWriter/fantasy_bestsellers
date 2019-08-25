@@ -48,7 +48,12 @@ class BookInfoSpider(scrapy.Spider):
         group_str = '//div[@id = "reviewFeatureGroup"]'
         book_info['series'] = response.xpath(group_str + '/span/a/text()').get()
         book_info['series_num'] = response.xpath(group_str + '/span/b').get()
-        book_info['series_len'] = response.xpath(group_str + '/span/text()').getall()[1]
+
+        try:
+            book_info['series_len'] = response.xpath(group_str + '/span/text()').getall()[1]
+        except:
+            book_info[series_len'] = None
+
         book_info['rating'] = response.xpath(group_str + '//div[@id = "averageCustomerReviews"]'
             '/span/span/@title').get()
         book_info['review_count'] = response.xpath(
@@ -60,8 +65,12 @@ class BookInfoSpider(scrapy.Spider):
             '//li/b[contains(text(), "Print Length:")]/../text()').get()
         book_info['publisher'] = response.xpath(detail_str +
             '//li/b[contains(text(), "Publisher:")]/../text()').get()
-        book_info['all_rank'] = response.xpath(detail_str +
-            '//li[@id = "SalesRank"]/text()').getall()[1]
+
+        try:
+            book_info['all_rank'] = response.xpath(detail_str +
+                '//li[@id = "SalesRank"]/text()').getall()[1]
+        except:
+            book_info['all_rank'] = None
 
         if response.xpath('//span[@id = "upsell-button"]').get() is not None:
             book_info['ku'] = 'yes'
