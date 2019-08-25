@@ -44,8 +44,11 @@ class BookInfoSpider(scrapy.Spider):
         book_info['author'] = response.xpath('//div[@id = "bylineInfo"]/span/span[1]'
             '/a/text()').get()
 
-        book_info['price'] = response.xpath('//tr[@class = "kindle-price"]'
-            '//span[@class = "a-size-medium a-color-price"]/text()').get()
+        try:
+            book_info['price'] = response.xpath('//tr[@class = "kindle-price"]'
+                '//span[@class = "a-size-medium a-color-price"]/text()').get().strip()
+        except:
+            book_info['price'] = None
 
         group_str = '//div[@id = "reviewFeatureGroup"]'
 
