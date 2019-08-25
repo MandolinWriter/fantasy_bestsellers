@@ -46,7 +46,7 @@ class Top100ScraperPipeline(object):
             print(book_info['review_count'])
 
         try:
-            book_info['page_count'] = int(([book_info['page_count'].
+            book_info['page_count'] = int((book_info['page_count'].
                 replace(',','')).split()[0])
         except:
             print('No page count for ' + book_info['title'])
