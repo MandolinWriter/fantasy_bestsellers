@@ -52,7 +52,7 @@ class BookInfoSpider(scrapy.Spider):
         try:
             book_info['series_len'] = response.xpath(group_str + '/span/text()').getall()[1]
         except:
-            book_info[series_len'] = None
+            book_info['series_len'] = None
 
         book_info['rating'] = response.xpath(group_str + '//div[@id = "averageCustomerReviews"]'
             '/span/span/@title').get()
