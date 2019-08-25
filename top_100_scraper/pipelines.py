@@ -10,65 +10,65 @@ from bs4 import BeautifulSoup
 class Top100ScraperPipeline(object):
     def process_item(self, item, spider):
 
-        book_info['f_rank'] = int(''.join(filter(str.isdigit, book_info['f_rank'])))
+        item['f_rank'] = int(''.join(filter(str.isdigit, item['f_rank'])))
 
-        book_info['title'] = ' '.join(book_info['title'].split())
+        item['title'] = ' '.join(item['title'].split())
 
         try:
-            book_info['price'] = book_info['price'].strip()
+            item['price'] = item['price'].strip()
         except:
-            print('No price for ' + book_info['title'])
-            print(book_info['price'])
+            print('No price for ' + item['title'])
+            print(item['price'])
 
         try:
-            book_info['series_num'] = int(''.join(filter(str.isdigit,
-                book_info['series_num'])))
-        except:
-            pass
-
-        try:
-            book_info['series_len'] = int("".join(filter(str.isdigit,
-                book_info['series_len'])))
+            item['series_num'] = int(''.join(filter(str.isdigit,
+                item['series_num'])))
         except:
             pass
 
         try:
-            book_info['rating'] = float(book_info['rating'].split()[0])
+            item['series_len'] = int("".join(filter(str.isdigit,
+                item['series_len'])))
         except:
-            print('No rating for ' + book_info['title'])
-            print(book_info['rating'])
+            pass
 
         try:
-            book_info['review_count'] = int((book_info['review_count'].
+            item['rating'] = float(item['rating'].split()[0])
+        except:
+            print('No rating for ' + item['title'])
+            print(item['rating'])
+
+        try:
+            item['review_count'] = int((item['review_count'].
                 replace(',','')).split()[0])
         except:
-            print('No reviews for ' + book_info['title'])
-            print(book_info['review_count'])
+            print('No reviews for ' + item['title'])
+            print(item['review_count'])
 
         try:
-            book_info['page_count'] = int((book_info['page_count'].
+            item['page_count'] = int((item['page_count'].
                 replace(',','')).split()[0])
         except:
-            print('No page count for ' + book_info['title'])
-            print(book_info['page_count'])
+            print('No page count for ' + item['title'])
+            print(item['page_count'])
 
         try:
-            book_info['publisher'] = book_info['publisher'].strip()
+            item['publisher'] = item['publisher'].strip()
         except:
-            print('No publisher for ' + book_info['title'])
-            print(book_info['publisher'])
+            print('No publisher for ' + item['title'])
+            print(item['publisher'])
 
         try:
-            book_info['all_rank'] = int(((' '.join(book_info['all_rank'].
+            item['all_rank'] = int(((' '.join(item['all_rank'].
                 split())).replace('#','').split())[0])
         except:
-            print('No kindle rank for ' + book_info['title'])
-            print(book_info['all_rank'])
+            print('No kindle rank for ' + item['title'])
+            print(item['all_rank'])
 
         try:
-            book_info['blurb'] = BeautifulSoup(book_info['blurb']).text.strip('\n')
+            item['blurb'] = BeautifulSoup(item['blurb']).text.strip('\n')
         except:
-            print('No blurb for ' + book_info['title'])
-            print(book_info['blurb'])
+            print('No blurb for ' + item['title'])
+            print(item['blurb'])
 
         return item
