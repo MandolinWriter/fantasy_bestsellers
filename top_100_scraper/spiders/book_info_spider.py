@@ -23,6 +23,9 @@ class BookInfoSpider(scrapy.Spider):
             next_book_url = book.xpath('./span/a/@href').get()
 
             if next_book_url is not None:
+
+                print(next_book_url)
+
                 yield scrapy.Request(response.urljoin(next_book_url),
                     callback = self.parse_book, meta = {'item': book_info})
 
