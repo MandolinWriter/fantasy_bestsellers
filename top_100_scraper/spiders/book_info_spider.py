@@ -11,14 +11,22 @@ class BookInfoSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-
-        n = 1
-
         for book in response.xpath('//div[has-class("a-section a-spacing-none aok-relative")]'):
 
             book_info = BookItem()
 
             book_info['f_rank'] = book.xpath('./div/span/span/text()').get()
+
+            ku = book.xpath('.//div[@class = "a-section a-spacing-small"]/img/@src').get()
+
+            if ku is not None:
+                if 'ku-sticker' in ku:
+                    book_info['ku'] = 'yes'
+                else:
+                    book_info['ku'] = 'no'
+            else:
+                book_info['ku'] = 'no'
+                print('KU link not found')
 
             next_book_url = book.xpath('./span/a/@href').get()
 
@@ -36,8 +44,6 @@ class BookInfoSpider(scrapy.Spider):
 
 
     def parse_book(self, response):
-        print(response.body)
-
         book_info = response.meta['item']
 
         book_info['title'] = response.xpath(
@@ -76,10 +82,10 @@ class BookInfoSpider(scrapy.Spider):
         except:
             book_info['all_rank'] = None
 
-        if response.xpath('//span[@id = "upsell-button"]').get() is not None:
-            book_info['ku'] = 'yes'
-        else:
-            book_info['ku'] = 'no'
+        # if response.xpath('//span[@id = "upsell-button"]').get() is not None:
+        #     book_info['ku'] = 'yes'
+        # else:
+        #     book_info['ku'] = 'no'
 
         book_info['blurb'] = response.xpath('//div[@id = "bookDescription_feature_div"]'
             '/noscript').get()
